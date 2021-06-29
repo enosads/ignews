@@ -5,10 +5,10 @@ import {getPrismicClient} from "../../services/prismic";
 import Prismic from "@prismicio/client";
 import {RichText} from "prismic-dom";
 import Link from 'next/link';
+import {getSession} from "next-auth/client";
 
 interface PostsProps {
     posts: Post[]
-
 }
 
 type Post = {
@@ -18,6 +18,8 @@ type Post = {
     updatedAt: Date
 }
 export default function Posts({posts}: PostsProps) {
+
+
     return (
         <>
             <Head>
@@ -33,7 +35,6 @@ export default function Posts({posts}: PostsProps) {
                                 <p>{post.excerpt}</p>
                             </a>
                         </Link>
-
                     ))}
                 </div>
             </main>

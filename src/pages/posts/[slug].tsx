@@ -9,7 +9,7 @@ type Post = {
     slug: string;
     title: string;
     updatedAt: Date;
-    content: HTMLElement;
+    content: string;
 }
 
 interface PostProps {
@@ -30,7 +30,7 @@ export default function Post({post}: PostProps) {
                     <time>{post.updatedAt}</time>
                     <div
                         className={styles.postContent}
-                        dangerouslySetInnerHTML={{__html: JSON.stringify(post.content)}}
+                        dangerouslySetInnerHTML={{__html: post.content}}
                     />
                 </article>
             </main>
@@ -40,6 +40,16 @@ export default function Post({post}: PostProps) {
 
 export const getServerSideProps: GetServerSideProps = async ({req, params}) => {
     const session = await getSession({req});
+    const {slug} = params;
+
+    if (!session) {
+        return {
+            redirect: {
+                destination: `/posts/preview/${slug}`,
+                permanent: false
+            }
+        }
+    }
     if (!session.activeSubscription) {
         return {
             redirect: {
@@ -49,7 +59,6 @@ export const getServerSideProps: GetServerSideProps = async ({req, params}) => {
         }
     }
 
-    const {slug} = params;
 
     const prismic = getPrismicClient(req);
     const response = await prismic.getByUID('post', String(slug), {});
